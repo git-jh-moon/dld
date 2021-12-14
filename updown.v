@@ -36,23 +36,23 @@ module updown(
 	assign down_passenger[0] = 0;
 	assign down_passenger[1] = 0;
 	//2
-	assign down_passenger[2] = (remaining_2[2:0] > 2);
-	assign down_passenger[3] = (remaining_2[5:3] > 2);
+	assign down_passenger[2] = (remaining_2[2:0] < 2) || (remaining_2[2:0] > 0);
+	assign down_passenger[3] = (remaining_2[5:3] < 2) || (remaining_2[5:3] > 0);
 	//3
-	assign down_passenger[4] = (remaining_3[2:0] > 3);
-	assign down_passenger[5] = (remaining_3[5:3] > 3);
+	assign down_passenger[4] = (remaining_3[2:0] < 3) || (remaining_3[2:0] > 0);
+	assign down_passenger[5] = (remaining_3[5:3] < 3) || (remaining_3[5:2] > 0);
 	//4
-	assign down_passenger[6] = (remaining_4[2:0] > 4);
-	assign down_passenger[7] = (remaining_4[5:3] > 4);
+	assign down_passenger[6] = (remaining_4[2:0] < 4) || (remaining_4[2:0] > 0);
+	assign down_passenger[7] = (remaining_4[5:3] < 4) || (remaining_4[5:3] > 0);
 	//5
-	assign down_passenger[8] = (remaining_5[2:0] > 5);
-	assign down_passenger[9] = (remaining_5[5:3] > 5);
+	assign down_passenger[8] = (remaining_5[2:0] < 5) || (remaining_5[2:0] > 0);
+	assign down_passenger[9] = (remaining_5[5:3] < 5) || (remaining_5[5:3] > 0); 
 	//6
-	assign down_passenger[10] = (remaining_6[2:0] > 6);
-	assign down_passenger[11] = (remaining_6[5:3] > 6);
+	assign down_passenger[10] = (remaining_6[2:0] < 6) || (remaining_6[2:0] > 0);
+	assign down_passenger[11] = (remaining_6[5:3] < 6) || (remaining_6[5:3] > 0);
 	//7
-	assign down_passenger[12] = 0;
-	assign down_passenger[13] = 0;
+	assign down_passenger[12] = (remaining_7[2:0] < 7) || (remaining_7[2:0] > 0);
+	assign down_passenger[13] = (remaining_7[5:3] < 7) || (remaining_7[5:3] > 0);
 	
 	
 endmodule
