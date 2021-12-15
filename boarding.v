@@ -1,6 +1,6 @@
 module boarding(
     input   [1:0]   emergency,
-    input   [5:0]   hold_1, hold_2,
+    input   [6:0]   hold_1, hold_2,
     input           clock,
     input   [2:0]   curr_elevator_1, curr_elevator_2,
     input   [5:0]   boarding_1, boarding_2,
