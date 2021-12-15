@@ -4,7 +4,7 @@ module floor(
     input [1:0] turn,
     input [2:0] curr_elevator_1, curr_elevator_2,
     input [1:0] dir_elevator,
-    input [5:0] hold_1, hold_2,
+    input [6:0] hold_1, hold_2,
     output reg [2:0] curr_elevator_1_next, curr_elevator_2_next,
     output reg [1:0] dir_elevator_next
     );
@@ -17,7 +17,7 @@ module floor(
             end
             2'b01: begin
                 dir_elevator_next[1] <= (turn[1])? ~dir_elevator[1] : dir_elevator[1];
-                // emergency Ç®·ÇÀ» ¶§ µÎ ¿¤º£°¡ °°Àº ÃþÀÌ°í °°Àº ¹æÇâÀÌ¸é ´Ù¸¥ ·ÎÁ÷¿¡ ¹®Á¦°¡ »ý±è
+                // emergency í’€ë ·ì„ ë•Œ ë‘ ì—˜ë² ê°€ ê°™ì€ ì¸µì´ê³  ê°™ì€ ë°©í–¥ì´ë©´ ë‹¤ë¥¸ ë¡œì§ì— ë¬¸ì œê°€ ìƒê¹€
                 dir_elevator_next[0] <= (curr_elevator_1 == curr_elevator_2)? ~dir_elevator[1] : dir_elevator[0];
             end
             2'b10: begin
@@ -33,16 +33,16 @@ module floor(
     always @ (posedge clock) begin
         case (emergency)
             2'b00: begin
-                curr_elevator_1_next <= (hold_1[5] || hold_1[2])? curr_elevator_1 : curr_elevator_1 + 2*dir_elevator[1] - 1;
-                curr_elevator_2_next <= (hold_2[5] || hold_2[2])? curr_elevator_2 : curr_elevator_2 + 2*dir_elevator[0] - 1;
+                curr_elevator_1_next <= (hold_1[5] || hold_1[2] || hold_1[6])? curr_elevator_1 : curr_elevator_1 + 2*dir_elevator[1] - 1;
+                curr_elevator_2_next <= (hold_2[5] || hold_2[2] || hold_2[6])? curr_elevator_2 : curr_elevator_2 + 2*dir_elevator[0] - 1;
             end
             2'b01: begin
-                curr_elevator_1_next <= (hold_1[5] || hold_1[2])? curr_elevator_1 : curr_elevator_1 + 2*dir_elevator[1] - 1;
+                curr_elevator_1_next <= (hold_1[5] || hold_1[2] || hold_1[6])? curr_elevator_1 : curr_elevator_1 + 2*dir_elevator[1] - 1;
                 curr_elevator_2_next <= curr_elevator_2;
             end
             2'b10: begin
                 curr_elevator_1_next <= curr_elevator_1;
-                curr_elevator_2_next <= (hold_2[5] || hold_2[2])? curr_elevator_2 : curr_elevator_2 + 2*dir_elevator[0] - 1;
+                curr_elevator_2_next <= (hold_2[5] || hold_2[2] || hold_2[6])? curr_elevator_2 : curr_elevator_2 + 2*dir_elevator[0] - 1;
             end
             default: begin
                 curr_elevator_1_next <= 2'bxx;
