@@ -3,12 +3,12 @@ module time_tb(
     );
 	reg clock;
 	reg reset_start;
-	wire [7:0] counter;
+	wire [7:0] time_counter;
 	
     time_cnt TIME_CNT(
 		.clock(clock),
 		.reset_start (reset_start),
-		.counter (counter)
+	    .time_counter (time_counter)
 		);
 
     initial begin
@@ -21,7 +21,7 @@ module time_tb(
     initial begin
         $monitor($time,
             "ns.    output changed\t => counter : %d\n",
-            counter    
+            time_counter    
             );
     end
 
