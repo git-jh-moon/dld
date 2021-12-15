@@ -1,5 +1,4 @@
 module boarding(
-    input           reset_start,
     input   [1:0]   emergency,
     input   [5:0]   hold_1, hold_2,
     input           clock,
