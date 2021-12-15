@@ -16,8 +16,8 @@ module elevator_top(
 	wire [13:0]	down_passenger;
 	wire [1:0]	dir_elevator;
 	wire [1:0] turn;
-	wire [5:0] hold_1;
-	wire [5:0] hold_2;
+	wire [6:0] hold_1;
+	wire [6:0] hold_2;
 	wire [1:0] dir_elevator_next;
 	wire [5:0] remaining_1_next, remaining_2_next, remaining_3_next, remaining_4_next, remaining_5_next, remaining_6_next, remaining_7_next;
     wire [5:0] boarding_1_next, boarding_2_next;
