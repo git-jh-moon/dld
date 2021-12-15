@@ -115,4 +115,17 @@ module elevator_top(
         .boarding_1(boarding_1),
         .boarding_2(boarding_2)
         );
+    floor   FLOOR(
+        .emergency(emergency),
+        .hold_1(hold_1),
+        .hold_2(hold_2),
+        .clock(clock),
+        .turn(turn),
+        .curr_elevator_1(curr_elevator_1),
+        .curr_elevator_2(curr_elevator_2),
+        .curr_elevator_1_next(curr_elevator_1_next),
+        .curr_elevator_2_next(curr_elevator_2_next),
+        .dir_elevator(dir_elevator),
+        .dir_elevator_next(dir_elevator_next)
+        );
 endmodule
