@@ -4,10 +4,8 @@ module turn(
     input   [1:0]   dir_elevator,
     input   [5:0]   boarding_1, boarding_2,
     output wire  [1:0]   turn,
-    output reg  hold_1, hold_2
+    output reg   [5:0]   hold_1, hold_2
     );
-    
-    // flag of remaining passengers above orW beneath
     wire [13:0] up_1, up_2, down_1, down_2;
     rsh up_1_rsh(
         .a(up_passenger),
@@ -29,48 +27,35 @@ module turn(
         .f(curr_elevator_2 - 1),
         .y(down_2)
         );
-    // flag of wheter is elevator is empty
-    wire empty_1 = (boarding_1[5:3] == 3'b0) && (boarding_1[2:0] == 3'b0);
-    wire empty_2 = (boarding_2[5:3] == 3'b0) && (boarding_2[2:0] == 3'b0);
+    // arrival (2bit) - 10 : MSB passenger is arrived, 01 : LSB passenger is arrived, 11 : two passengers are arrived, 00 : no passenger is arrived
+    wire [1:0] arrival_1 = {(curr_elevator_1 == boarding_1[5:3]), (curr_elevator_1 == boarding_1[2:0])};
+    wire [1:0] arrival_2 = {(curr_elevator_2 == boarding_2[5:3]), (curr_elevator_2 == boarding_2[2:0])};
+    // pos (2bit) - which position of elevator is occupied
+    wire [1:0] pos_1 = {(boarding_1[5:3] > 3'b0), (boarding_1[2:0] > 3'b0)};
+    wire [1:0] pos_2 = {(boarding_2[5:3] > 3'b0), (boarding_2[2:0] > 3'b0)};
+    // spare (2bit) - which position of elevator will be null
+    wire [1:0] spare_1 = {~(pos_1[1])+arrival_1[1], ~(pos_1[0])+arrival_1[0]};
+    wire [1:0] spare_2 = {~(pos_2[1])+arrival_2[1], ~(pos_2[0])+arrival_2[0]};
+    
+    wire [1:0] spare_1_count = spare_1[1]+spare_1[0];
+    wire [1:0] spare_2_count = spare_2[1]+spare_2[0];
+    
+    wire [1:0] leaval_1 = (dir_elevator[1])? up_1[1:0] : down_1[13:12];
+    wire [1:0] leaval_2 = (dir_elevator[0])? up_2[1:0] : down_2[13:12];
+    wire [1:0] leaval_1_count = leaval_1[1]+leaval_1[0];
+    wire [1:0] leaval_2_count = leaval_2[1]+leaval_2[0];
 
     // target floor of each elevator
     reg turn_1;
     reg turn_2;
     assign turn = {turn_1, turn_2};
-
+    // hold
+    // 6bit - [5] 엘베 내릴 때 [4:3] 엘리베이터 비게 될 위치  [2] 엘베 탈 때 [1:0] 타는 사람 위치
     always @(*) begin
-        case(dir_elevator)
-            2'b00:  begin
-                turn_1 <= empty_1 && (down_1[11:0] == 12'b0);
-                hold_1 <= (down_1[13:12] > 2'b0)? 1'b1 : 1'b0;
-                turn_2 <= empty_2 && (down_2[11:0] == 12'b0);
-                hold_2 <= (down_2[13:12] > 2'b0)? 1'b1 : 1'b0;
-            end
-            2'b01:  begin
-                turn_1 <= empty_1 && (down_1[11:0] == 12'b0);
-                hold_1 <= (down_1[13:12] > 2'b0)? 1'b1 : 1'b0;
-                turn_2 <= empty_2 && (up_2[13:2] == 12'b0);
-                hold_2 <= (up_2[1:0] > 2'b0)? 1'b1 : 1'b0;
-            end
-            2'b10:  begin
-                turn_1 <= empty_1 && (up_1[13:2] == 12'b0);
-                hold_1 <= (up_1[1:0] > 2'b0)? 1'b1 : 1'b0;
-                turn_2 <= empty_2 && (down_2[11:0] == 12'b0);
-                hold_2 <= (down_2[13:12] > 2'b0)? 1'b1 : 1'b0;
-            end
-            2'b11:  begin
-                turn_1 <= empty_1 && (up_1[13:2] == 12'b0);
-                hold_1 <= (up_1[1:0] > 2'b0)? 1'b1 : 1'b0;
-                turn_2 <= empty_2 && (up_2[13:2] == 12'b0);
-                hold_2 <= (up_2[1:0] > 2'b0)? 1'b1 : 1'b0;
-            end
-            default:    begin
-                turn_1 <= 1'bx;
-                hold_1 <= 1'bx;
-                turn_2 <= 1'bx;
-                hold_2 <= 1'bx;
-            end
-        endcase
+        turn_1 <= (dir_elevator[1])? (pos_1 == 2'b0) && (up_1[13:2] == 12'b0) : (pos_1 == 2'b0) && (down_1[11:0] == 12'b0);
+        turn_2 <= (dir_elevator[0])? (pos_2 == 2'b0) && (up_2[13:2] == 12'b0) : (pos_2 == 2'b0) && (down_2[11:0] == 12'b0);
+        hold_1 <= {(arrival_1>2'b0), arrival_1, (leaval_1_count < spare_1_count+1) && (leaval_1_count > 2'b0), leaval_1};
+        hold_2 <= {(arrival_2>2'b0), arrival_2, (leaval_2_count < spare_2_count+1) && (leaval_2_count > 2'b0), leaval_2};
     end
 	
 endmodule
